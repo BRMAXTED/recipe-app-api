@@ -22,7 +22,5 @@ jobs:
         run: docker-compose run --user root --rm app sh -c "coverage run manage.py test" # Command that will run the unit tests
       - name: Coverage Report
         run: docker-compose run --user root --rm app sh -c "coverage report -m"
-        with:
-          GITHUB_TOKEN: ${{ github.token }}
       - name: Lint # Perform linting check on the project
         run: docker-compose run --rm app sh -c "flake8"
