@@ -1,0 +1,2 @@
+#Requirements that will only be installed for development
+flake8>=7.0.0,<7.1.0

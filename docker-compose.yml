@@ -1,0 +1,25 @@
+# version of the docker compose to use
+# version : "2.24"
+# specifies services
+# app:    || name of our service
+# build:
+#      context: .       || states that we want to build the docker file in our current directory
+#       args:
+#        - DEV=true     || tells compose to iset a build arguement to DEV and set it to true - use it in docker file
+#     volumes:
+#      -./app:/app      || maps directories of our machine to the docker container (app directory is mapped to the app directory in the container)
+#                           allows for automatic synch
+#    command: >
+#      sh -c "python manage.py runserver 0.0.0.0:8000"     || the command we need to run to start the service
+services:
+  app:
+    build:
+      context: .
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
