@@ -4,4 +4,4 @@ omit =
     app/settings.py
     app/urls.py
     manage.py
-data_file = /tmp/.coverage
+data_file = /home/.coverage
