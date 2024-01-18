@@ -19,6 +19,8 @@ jobs:
       - name: Checkout #This action checks-out your repository, so your workflow can access it.
         uses: actions/checkout@v4 #https://github.com/actions/checkout
       - name: Test # Run unit tests on our project
-        run: docker-compose run --rm app sh -c "python manage.py test" # Command that will run the unit tests
+        run: docker-compose run --rm app sh -c "coverage run manage.py test" # Command that will run the unit tests
+      - name: coverage
+        run: docker-compose run --rm app sh -c "coverage report" # Command that will run the coverage
       - name: Lint # Perform linting check on the project
         run: docker-compose run --rm app sh -c "flake8"
