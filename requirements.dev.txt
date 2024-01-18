@@ -1,2 +1,3 @@
 #Requirements that will only be installed for development
 flake8>=7.0.0,<7.1.0
+coverage>=7.4,<7.5
