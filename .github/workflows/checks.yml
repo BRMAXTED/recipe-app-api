@@ -20,8 +20,8 @@ jobs:
         uses: actions/checkout@v4 #https://github.com/actions/checkout
       - name: Test # Run unit tests on our project
         run: docker-compose run --user root --rm app sh -c "coverage run manage.py test" # Command that will run the unit tests
-      - name: Coverage comment
-        uses: ocker-compose run --user root --rm app sh -c "coverage report -m"
+      - name: Coverage Report
+        run: docker-compose run --user root --rm app sh -c "coverage report -m"
         with:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Lint # Perform linting check on the project
