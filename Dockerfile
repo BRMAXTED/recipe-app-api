@@ -47,6 +47,8 @@ RUN python -m venv /py && \
     --disabled-password \
     --no-create-home \
     django-user
+  mkdir -p /app/cov && \
+  chown -R django-user:django-user /app/cov
 
 
 # Updates the PATH environment variable for python
