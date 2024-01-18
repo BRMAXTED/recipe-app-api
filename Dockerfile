@@ -46,7 +46,7 @@ RUN python -m venv /py && \
   adduser \
     --disabled-password \
     --no-create-home \
-    django-user
+    django-user && \
   mkdir -p /app/cov && \
   chown -R django-user:django-user /app/cov
 
