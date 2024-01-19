@@ -1,6 +1,6 @@
 [run]
 omit =
-    app/__init__.py 
+    */__init__.py 
     app/settings.py
     app/urls.py
     manage.py

@@ -9,9 +9,14 @@ services:
     volumes:
       - ./app:/app # maps directories of our machine to the docker container 
       #           (app directory is mapped to the app directory in the container)
-    # the command we need to run to start the service
+    # the commands we need to run to start the service
+    # 1. Waits for db to be available
+    # 2. performs any migrations of the db
+    # 3. Starts the server
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db && 
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     environment:
       # Note: These values are used by django to pull in the database
       # Note: the name of the DB_HOST is the same name as a service "db"
