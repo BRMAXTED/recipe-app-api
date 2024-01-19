@@ -1,25 +1,39 @@
-# version of the docker compose to use
-# version : "2.24"
-# specifies services
-# app:    || name of our service
-# build:
-#      context: .       || states that we want to build the docker file in our current directory
-#       args:
-#        - DEV=true     || tells compose to iset a build arguement to DEV and set it to true - use it in docker file
-#     volumes:
-#      -./app:/app      || maps directories of our machine to the docker container (app directory is mapped to the app directory in the container)
-#                           allows for automatic synch
-#    command: >
-#      sh -c "python manage.py runserver 0.0.0.0:8000"     || the command we need to run to start the service
 services:
-  app:
+  app: # Name of our service. Convention is to call it app
     build:
-      context: .
+      context: .  # states that we want to build the docker file in our current directory
       args:
-        - DEV=true
+        - DEV=true # This variable is True if built from docker-compose, and false if built from Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/app
+      - ./app:/app # maps directories of our machine to the docker container 
+      #           (app directory is mapped to the app directory in the container)
+    # the command we need to run to start the service
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      # Note: These values are used by django to pull in the database
+      # Note: the name of the DB_HOST is the same name as a service "db"
+      - DB_HOST=db
+      # Following need to match those set in the db environment
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    depends_on: # this tells docker compose to wait for the db to start as it depends on the service
+      - db
+
+  db:
+    image: postgres:16-alpine # This is the postgreSQL service image on Docker
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+    # Following items sets the initial database configuration for db service
+      - POSTGRES_DB=devdb # Name of the postgres database in the environment
+    # Note: these are not what is used if we deploy actual server, just for development
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+
+volumes:
+  dev-db-data:

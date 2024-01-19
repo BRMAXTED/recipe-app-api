@@ -22,34 +22,33 @@ EXPOSE 8000
 
 # sets the DEV arguments to false, overriding the docker-compose DEV argument
 ARG DEV=false
-# run command to install dependancies
-# the "&& \" breaks the command into multiple lines
-# python -m venv /py                                      || create a new virtual environment where the dependancies are installed
-# /py/bin/pip install --upgrade pip                       || upgrades pip for the virtual environment
-# /y/bin/pip install -r /tmp/requirements.txt             || installs the list of pip requirments inside the virtual environment
-# if [$DEV = "true"]; \                                     
-#     then /py/bin/pip install -r requirements.dev.txt ; \|| Shell script to install the dev requirements if DEV argument is true
-#   fi && \                                               || 'if' backwards ends the if statement in the shell script
 
-# rm -rf \tmp                                             || removes the tmp directory, need to remove everything that is extra before we create the image
-# adduser                                                 || calls the adduser to create a new user inside the image (don't want to use root user)
-# --disabled-password                                     || disables password
-# --no-create-home                                        || dont need home directory
-# django-user                                             || creates a container user called 'django-user'
+    #Install the python virtual environment
 RUN python -m venv /py && \
-  /py/bin/pip install --upgrade pip && \
-  /py/bin/pip install -r /tmp/requirements.txt && \
-  if [ $DEV = "true" ]; \
+    # upgrade PIP
+    /py/bin/pip install --upgrade pip && \
+    # APK stands for Alpine Linux package keeper (manager)
+    # install the postgresql-client linus package
+    apk add --update --no-cache postgresql-client && \
+    # Creates a virtual build environment 'dependency package'
+    # We can remove this later in the RUN command
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
+    # installs the list of pip requirments inside the virtual environment
+    /py/bin/pip install -r /tmp/requirements.txt && \
+    # Shell script to install the dev requirements if DEV argument is true
+    if [ $DEV = "true" ]; \
     then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
-  fi && \
-  rm -rf /tmp && \
-  adduser \
-    --disabled-password \
-    --no-create-home \
-    django-user
-  #mkdir -p /app/cov && \
-  # chown -R django-user:django-user /app/cov
-
+    fi && \
+    # removes the tmp directory, need to remove everything that is extra before we create the image
+    rm -rf /tmp && \
+    # Remove the temporary dependency environment
+    apk del .tmp-build-deps && \
+    # Adds a new user django-user. We do not want to use the root user
+    adduser \
+        --disabled-password \
+        --no-create-home \
+        django-user
 
 # Updates the PATH environment variable for python
 ENV PATH="/py/bin:$PATH"
