@@ -1,7 +1,7 @@
 
 [flake8]
 exclude =
-    migrations,
+    app/core/migrations/*.py
     __pycache__,
     manage.py,
-    settings.py
+    settings.py,
