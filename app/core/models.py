@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin
 )
+from django.core.exceptions import FieldError
 
 
 class UserManager(BaseUserManager):
@@ -15,9 +16,22 @@ class UserManager(BaseUserManager):
     def create_user(self, email: models.EmailField, password=None,
                     **extra_fields):
         """Create save and return a new user"""
-        user: AbstractBaseUser = self.model(email=email, **extra_fields)
+        if not password:
+            raise FieldError('No Password provided')
+        if not email:
+            raise FieldError('No email provided')
+        normal_email = self.normalize_email(email)
+        user: AbstractBaseUser = self.model(email=normal_email, **extra_fields)
         user.set_password(password)
         user.save(using=self.db)
+        return user
+
+    def create_superuser(self, email: models.EmailField, password=None,
+                         **extra_fields):
+        """Createa save and return a super user"""
+        extra_fields = {**extra_fields, "is_staff": True,
+                        "is_superuser": True}
+        user = self.create_user(email=email, password=password, **extra_fields)
         return user
 
 
