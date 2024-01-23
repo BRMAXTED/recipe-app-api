@@ -28,10 +28,11 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email: models.EmailField, password=None,
                          **extra_fields):
-        """Createa save and return a super user"""
+        """Create and save and return a super user"""
         extra_fields = {**extra_fields, "is_staff": True,
                         "is_superuser": True}
         user = self.create_user(email=email, password=password, **extra_fields)
+        user.save(using=self.db)
         return user
 
 
