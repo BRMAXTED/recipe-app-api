@@ -14,9 +14,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView)
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
 
 urlpatterns = [
-   path('admin/', admin.site.urls),
+    # https://docs.djangoproject.com/en/5.0/ref/urls/#path
+    path('admin/', admin.site.urls),
+    # https://docs.djangoproject.com/en/5.0/topics/http/urls/#naming-url-patterns
+    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
+    path('api/docs/',
+         SpectacularSwaggerView.as_view(url_name='api-schema'),
+         name='api-docs',
+         ),
+    # https://docs.djangoproject.com/en/5.0/ref/urls/#include
+    path('api/user', include('user.urls'))
 ]
