@@ -32,5 +32,5 @@ urlpatterns = [
          name='api-docs',
          ),
     # https://docs.djangoproject.com/en/5.0/ref/urls/#include
-    path('api/user', include('user.urls'))
+    path('api/user/', include('user.urls'))
 ]

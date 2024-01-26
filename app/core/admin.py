@@ -16,11 +16,14 @@ class UserAdmin(BaseUserAdmin):
     pw:         2255
     Define the admin pages for users
     """
-    ordering = ['id']
-    list_display = ['email', 'name']
+    #  ordering = ['username']
+    list_display = ['username', 'email', 'first_name', 'last_name']
     # fieldsets is overwritten from base class
     fieldsets = (
-        (None, {"fields": ("email", "password")}),
+        (None, {"fields": ("username", "password")}),
+        (translate("Personal info"), {"fields": ("first_name",
+                                                 "last_name",
+                                                 "email")}),
         (
             translate("Permissions"),
             {
@@ -31,9 +34,10 @@ class UserAdmin(BaseUserAdmin):
                 ),
             },
         ),
-        (translate("Important dates"), {"fields": ("last_login", )}),
+        (translate("Important dates"), {"fields": ("date_created", )}),
+        (translate('Groups'), {"fields": ("databases",)})
     )
-    readonly_fields = ['last_login']
+    readonly_fields = ['date_created']
     # Fieldsets for adding a user
     add_fieldsets = (
         (
@@ -41,10 +45,9 @@ class UserAdmin(BaseUserAdmin):
             {
                 "classes": ("wide",),
                 "fields": (
-                            "email",
+                            "username",
                             "password1",
                             "password2",
-                            'name',
                             'is_active',
                             'is_staff',
                             'is_superuser',
