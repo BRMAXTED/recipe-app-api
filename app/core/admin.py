@@ -35,7 +35,7 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
         (translate("Important dates"), {"fields": ("date_created", )}),
-        (translate('Groups'), {"fields": ("databases",)})
+        # TODO  (translate('Groups'), {"fields": ("databases",)})
     )
     readonly_fields = ['date_created']
     # Fieldsets for adding a user
@@ -58,3 +58,6 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Project)
+admin.site.register(models.Database)
+admin.site.register(models.BusinessClient)

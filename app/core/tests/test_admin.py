@@ -21,16 +21,17 @@ class AdminSiteTests(TestCase):
         """
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
-            email='admin@example.com',
+            username='testUser',
             password='testpass123',
         )
         # https://docs.djangoproject.com/en/5.0/topics/testing/tools/#django.test.Client.force_login
         self.client.force_login(self.admin_user)
         #
         self.user = get_user_model().objects.create_user(
-            email='user@example.com',
+            username='user1',
             password='testpass123',
-            name='Test User',
+            first_name='Test',
+            last_name='User'
         )
 
     def test_users_list(self):
@@ -41,7 +42,7 @@ class AdminSiteTests(TestCase):
         # https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
         url = reverse('admin:core_user_changelist')
         res = self.client.get(url)
-        self.assertContains(res, self.user.name)
+        self.assertContains(res, self.user.username)
         self.assertContains(res, self.user.email)
 
     def test_edit_user_page(self):

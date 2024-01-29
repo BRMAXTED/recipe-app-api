@@ -7,11 +7,12 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin
 )
+from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import FieldError
 from django.utils.translation import gettext_lazy as translate
-from django.contrib.postgres.fields import ArrayField
+#  from django.contrib.postgres.fields import ArrayField
 
 
 class UserManager(BaseUserManager):
@@ -55,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(
         translate("username"),
         max_length=150,
-        primary_key=True,
+        unique=True,
         help_text=translate(
             "Required. 150 characters or fewer. Letters, "
             "digits and @/./+/-/_ only."
@@ -72,10 +73,6 @@ class User(AbstractBaseUser, PermissionsMixin):
                                  max_length=150,
                                  blank=True)
     email = models.EmailField(translate("email address"), blank=True)
-    databases = ArrayField(models.CharField(blank=True,
-                                            max_length=20),
-                           default=list,
-                           verbose_name=translate("databases"))
     is_staff = models.BooleanField(
         translate("staff status"),
         default=False,
@@ -98,3 +95,98 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
+
+
+class BusinessClient(models.Model):
+    name = models.CharField(
+        translate("Client Name"),
+        max_length=150,
+        unique=True,
+        help_text=translate(
+            "Required. 150 characters or fewer."
+        ),
+        error_messages={
+            "unique": translate("A Client with that name already exists."),
+        },)
+    date_created = models.DateTimeField(translate("date created"),
+                                        default=timezone.now)
+
+
+class Database(models.Model):
+    """
+    DeltaV Database object
+    """
+    name = models.CharField(
+        translate("Database Name"),
+        max_length=150,
+        unique=True,
+        help_text=translate(
+            "Required. 150 characters or fewer."
+        ),
+        error_messages={
+            "unique": translate("A Database with that name already exists."),
+        },)
+    description = models.CharField(
+        translate("Database Name"),
+        max_length=200,
+        help_text=translate(
+            "200 characters or fewer."
+        ),)
+    owned_by = models.ForeignKey(
+        BusinessClient,
+        verbose_name=translate("Company Name"),
+        on_delete=models.RESTRICT,
+        max_length=200,
+        help_text=translate(
+            "200 characters or fewer."
+        ),)
+    created_by = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete=models.RESTRICT,
+        )
+    date_created = models.DateTimeField(translate("date created"),
+                                        default=timezone.now)
+
+
+class Project(models.Model):
+    """
+    Project object
+    """
+    name = models.CharField(
+        translate("Project Name"),
+        max_length=150,
+        unique=True,
+        help_text=translate(
+            "Required. 150 characters or fewer."
+        ),
+        error_messages={
+            "unique": translate("A project with that name already exists."),
+        },)
+    description = models.CharField(
+        translate("Database Name"),
+        max_length=200,
+        help_text=translate(
+            "200 characters or fewer."
+        ),)
+    database = models.ForeignKey(
+        Database,
+        verbose_name=translate("Database Name"),
+        on_delete=models.RESTRICT,
+        max_length=50,
+        help_text=translate(
+            "Required. 50 characters or fewer."
+        ),)
+    client = models.ForeignKey(
+        BusinessClient,
+        verbose_name=translate("Client Name"),
+        on_delete=models.RESTRICT,
+        max_length=50,
+        help_text=translate(
+            "Required. 50 characters or fewer."
+        ),)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.RESTRICT,
+    )
+    date_created = models.DateTimeField(translate("date created"),
+                                        default=timezone.now)
